@@ -1,0 +1,39 @@
+# depslib dependency file v1.0
+1491656947 source:c:\users\kolmo\desktop\codeblocks_project\get_data_from_ram\main.c
+	<stdio.h>
+	<stdlib.h>
+	<visa.h>
+	<string.h>
+	<malloc.h>
+
+1491656974 
+
+1390260074 c:\program files (x86)\ivi foundation\visa\winnt\include\visa.h
+	<stdarg.h>
+	"visatype.h"
+
+1390260074 h"
+
+1390260074 c:\program files (x86)\ivi foundation\visa\winnt\include\visatype.h
+	<limits.h>
+	<sys/types.h>
+
+1390260074 .h>
+
+1491656431 source:c:\users\kolmo\desktop\codeblocks_project\get_data_from_ram\find_substring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1491656974 source:c:\users\kolmo\desktop\codeblocks_project\get_data_from_ram\test.c
+	<stdio.h>
+	<stdlib.h>
+	<visa.h>
+	<string.h>
+	<malloc.h>
+
+1491668064 source:/Users/wangjingli/Downloads/Project/get_data_from_ram/find_substring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
