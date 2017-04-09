@@ -32,9 +32,9 @@ int IsFallingEdge(unsigned char *buffer)
 
 void DataFormatConverse()
 {
-    __int64_t data_wrap = 0;
+    __int64 data_wrap = 0;
 	size_t data_size;
-	unsigned char *read_buffer = (unsigned char *)malloc((SINGLE_READ_MAX_LEN + RIGOL_HEAD_MAX_LEN) * sizeof(char));
+	unsigned char *read_buffer = (unsigned char *)malloc(2 * SINGLE_READ_MAX_LEN * sizeof(char));
 
 	int i;
 	for(i = 0; ; ++)
@@ -50,13 +50,13 @@ void DataFormatConverse()
 			break;
 		}
 
-		while((data_size = fread(read_buffer, 1, SINGLE_READ_MAX_LEN, fp_source)) != 0)
+		if((data_size = fread(read_buffer, 1, 2 * SINGLE_READ_MAX_LEN, fp_source)) != 0)
 		{
 			int count = 0;
 			int wrap_4bit_count = 0;
-			__int64_t *write_slip = (__int64_t *)read_buffer;
+			__int64 *write_slip = (__int64 *)read_buffer;
 
-			while(((*(read_buffer+count) & 0x10) == 0) && (count < data_size))
+			while(((*(read_buffer + count) & 0x10) == 0) && (count < data_size))
 			{
 				count++;
 			}
@@ -65,7 +65,7 @@ void DataFormatConverse()
 			{
 				if(IsFallingEdge(read_buffer + count) == 1)
 				{
-					data_wrap |= (__int64_t)(*(read_buffer + count) & data_mask) << (4 * wrap_4bit_count);
+					data_wrap |= (__int64)(*(read_buffer + count) & data_mask) << (4 * wrap_4bit_count);
 
 					wrap_4bit_count++;
 					if(wrap_4bit_count % 16 == 0)
