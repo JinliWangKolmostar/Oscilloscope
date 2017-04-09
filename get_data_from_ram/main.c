@@ -172,11 +172,20 @@ int main(int argc, char* argv[])
 	free(buffer);
 	free(matches);
 #endif
-    //DataFormatConverse();
-    //find_substring();
-    //test_GetValidData();
-    test_DataFormatConverse();
-    compareDiff();
+    DataFormatConverse();
+	printf("converse finished\n");
+
+	int i = 0;
+	while(1)
+	{
+		char sou_file_name[64];
+		sprintf(sou_file_name, "file_path_%d", i);
+	 	if(FindSubstring(sou_file_name) == -1)
+		 {
+			 break;
+		 }
+	}
+	printf("match finished\n");
 	return 0;
 }
 
