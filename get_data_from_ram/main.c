@@ -35,7 +35,7 @@ void DataFormatConverse()
 {
     __int64_t data_wrap = 0;
 	size_t data_size;
-	unsigned char *read_buffer = (unsigned char *)malloc((SINGLE_READ_MAX_LEN + RIGOL_HEAD_MAX_LEN) * sizeof(char));
+	unsigned char *read_buffer = (unsigned char *)malloc(SINGLE_READ_MAX_LEN * sizeof(char));
 
 	FILE *fp_source = fopen(origin_file_name, "rb");
 	FILE *fp_destin = fopen(source_file_name, "wb");
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 	unsigned long strStopPos_WriteLen;
 	unsigned long strGetData_WriteLen;
 
-	unsigned char *buffer = (unsigned char *)malloc(SINGLE_READ_MAX_LEN * sizeof(char));
+	unsigned char *buffer = (unsigned char *)malloc((SINGLE_READ_MAX_LEN + RIGOL_HEAD_MAX_LEN) * sizeof(char));
 	unsigned long readLen;
 
 	ViRsrc matches = (ViRsrc)malloc(256);
@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
 			//read data from ram of oscilloscope
 			viRead(vi, buffer, SINGLE_READ_MAX_LEN, &readLen);
 
-			fwrite(buffer + RIGOL_HEAD_MAX_LEN, 1, readLens, fp);
+			fwrite(buffer + RIGOL_HEAD_MAX_LEN, 1, readLen, fp);
 		}
 		viWrite(vi, (unsigned char *)strRun, strlen(strRun), &strStop_WriteLen);
 
