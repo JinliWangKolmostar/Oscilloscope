@@ -8,7 +8,6 @@
 static const unsigned int MEMORY_DEPTH = 120000;
 static const unsigned int SINGLE_READ_MAX_LEN = 250000;
 static const unsigned int RIGOL_HEAD_MAX_LEN = 11;
-static const char source_file_name[64] = "C:\\rigol_data\\valid_data.bin";
 static const unsigned char data_mask = 0x0F;
 
 void find_substring();
@@ -37,44 +36,57 @@ void DataFormatConverse()
 	size_t data_size;
 	unsigned char *read_buffer = (unsigned char *)malloc((SINGLE_READ_MAX_LEN + RIGOL_HEAD_MAX_LEN) * sizeof(char));
 
-	FILE *fp_source = fopen(origin_file_name, "rb");
-	FILE *fp_destin = fopen(source_file_name, "wb");
-
-	while((data_size = fread(read_buffer, 1, SINGLE_READ_MAX_LEN, fp_source)) != 0)
+	int i;
+	for(i = 0; ; ++)
 	{
-	    int count = 0;
-        int wrap_4bit_count = 0;
-        __int64_t *write_slip = (__int64_t *)read_buffer;
-
-		while(((*(read_buffer+count) & 0x10) == 0) && (count < data_size))
-        {
-            count++;
-        }
-
-		while((count < data_size) && (*(read_buffer+count) & 0x10) != 0)
+		char origin_file_name[64];
+		char valid_file_name[64];
+		sprintf(origin_file_name, "C:\\rigol_data\\data_spi\\oscillo_date_%d.bin", i);
+		sprintf(valid_file_name, "C:\\rigol_data\\data_spi\\oscillo_valid_date_%d.bin", i);
+		FILE *fp_source = fopen(origin_file_name, "rb");
+		FILE *fp_destin = fopen(valid_file_name, "wb");
+		if(fp_source == NULL || fp_destin == NULL)
 		{
-			if(IsFallingEdge(read_buffer + count) == 1)
-			{
-			    data_wrap |= (__int64_t)(*(read_buffer + count) & data_mask) << (4 * wrap_4bit_count);
-
-                wrap_4bit_count++;
-                if(wrap_4bit_count % 16 == 0)
-                {
-                    *write_slip++ = data_wrap;
-                    data_wrap = 0;
-                }
-			}
-            count++;
+			break;
 		}
-		if(data_wrap != 0)
-        {
-            *write_slip = data_wrap;
-        }
-		fwrite(read_buffer, 1, (wrap_4bit_count + 1) / 2, fp_destin);
+
+		while((data_size = fread(read_buffer, 1, SINGLE_READ_MAX_LEN, fp_source)) != 0)
+		{
+			int count = 0;
+			int wrap_4bit_count = 0;
+			__int64_t *write_slip = (__int64_t *)read_buffer;
+
+			while(((*(read_buffer+count) & 0x10) == 0) && (count < data_size))
+			{
+				count++;
+			}
+
+			while((count < data_size) && (*(read_buffer+count) & 0x10) != 0)
+			{
+				if(IsFallingEdge(read_buffer + count) == 1)
+				{
+					data_wrap |= (__int64_t)(*(read_buffer + count) & data_mask) << (4 * wrap_4bit_count);
+
+					wrap_4bit_count++;
+					if(wrap_4bit_count % 16 == 0)
+					{
+						*write_slip++ = data_wrap;
+						data_wrap = 0;
+					}
+				}
+				count++;
+			}
+			if(data_wrap != 0)
+			{
+				*write_slip = data_wrap;
+			}
+			fwrite(read_buffer, 1, (wrap_4bit_count + 1) / 2, fp_destin);
+		}
+		fclose(fp_source);
+		fclose(fp_destin);
 	}
+	
 	free(read_buffer);
-	fclose(fp_source);
-	fclose(fp_destin);
     printf("data handle finished!\n");
 }
 
@@ -93,6 +105,7 @@ int DiscardDataHead(unsigned char *buffer)
 
 int main(int argc, char* argv[])
 {
+#if 0
 	ViSession defaultRM, vi;
 
 	char strStarPos[128];
@@ -158,7 +171,7 @@ int main(int argc, char* argv[])
 	viClose (defaultRM);
 	free(buffer);
 	free(matches);
-
+#endif
     //DataFormatConverse();
     //find_substring();
     //test_GetValidData();
