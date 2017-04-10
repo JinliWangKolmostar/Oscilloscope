@@ -6,7 +6,6 @@
 #define COMPARE_SIZE 256
 
 static unsigned char file_contet[DES_FILE_SIZE];
-// static const char source_file_name[64] = "C:\\rigol_data\\valid_data.bin";
 static const char log_file_name[64] = "C:\\rigol_data\\log.txt";
 
 int FindSubstring(char *source_file_name)
@@ -28,7 +27,7 @@ int FindSubstring(char *source_file_name)
         FILE *fp_des = fopen(des_file_name, "rb");
         if(fp_des == NULL)
         {
-            printf("nothing find\n");
+            printf("%s not be matched\n", source_file_name);
             break;
         }
         int get_size = fread(file_contet, 1, DES_FILE_SIZE, fp_des);
@@ -50,7 +49,7 @@ int FindSubstring(char *source_file_name)
             {
                 char log_string[128];
                 sprintf(log_string, "%s <-------> %s\n", source_file_name, des_file_name);
-                fwrite(log_string, 1 strlen(log_string), fp_log);
+                fwrite(log_string, 1, strlen(log_string), fp_log);
                 fclose(fp_sou);
                 match_success = 1;
                 break;

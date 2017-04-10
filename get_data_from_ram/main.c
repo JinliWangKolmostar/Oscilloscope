@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include <visa.h>
+#include <visa.h>
 #include <string.h>
 
 #define MIN(a, b) ((a) > (b) ? (b) : (a))
@@ -10,20 +10,11 @@ static const unsigned int SINGLE_READ_MAX_LEN = 250000;
 static const unsigned int RIGOL_HEAD_MAX_LEN = 11;
 static const unsigned char data_mask = 0x0F;
 
-void find_substring();
+int FindSubstring(char *source_file_name);
 void test();
 void test_GetValidData();
 void compareDiff();
 
-//void quiry(ViSession vi, char *quiry_commend)
-//{
-//    char buf[256];
-//	viPrintf (vi,quiry_commend);
-//	//��ȡ����
-//	viScanf (vi, "%t\n", &buf);
-//	//��������ʾ����
-//	printf("%s\n", buf);
-//}
 
 int IsFallingEdge(unsigned char *buffer)
 {
@@ -37,18 +28,18 @@ void DataFormatConverse()
 	unsigned char *read_buffer = (unsigned char *)malloc(2 * SINGLE_READ_MAX_LEN * sizeof(char));
 
 	int i;
-	for(i = 0; ; ++)
+	for(i = 0; ; i++)
 	{
 		char origin_file_name[64];
 		char valid_file_name[64];
-		sprintf(origin_file_name, "C:\\rigol_data\\data_spi\\oscillo_date_%d.bin", i);
-		sprintf(valid_file_name, "C:\\rigol_data\\data_spi\\oscillo_valid_date_%d.bin", i);
+		sprintf(origin_file_name, "C:\\rigol_data\\rigol_data_%d.bin", i);
+		sprintf(valid_file_name, "C:\\rigol_data\\data_oscillo\\oscillo_valid_data_%d.bin", i);
 		FILE *fp_source = fopen(origin_file_name, "rb");
+		if(fp_source == NULL)
+        {
+            break;
+        }
 		FILE *fp_destin = fopen(valid_file_name, "wb");
-		if(fp_source == NULL || fp_destin == NULL)
-		{
-			break;
-		}
 
 		if((data_size = fread(read_buffer, 1, 2 * SINGLE_READ_MAX_LEN, fp_source)) != 0)
 		{
@@ -85,7 +76,7 @@ void DataFormatConverse()
 		fclose(fp_source);
 		fclose(fp_destin);
 	}
-	
+
 	free(read_buffer);
     printf("data handle finished!\n");
 }
@@ -102,10 +93,16 @@ int DiscardDataHead(unsigned char *buffer)
 	return buffer_offset;
 }
 
+void delay(unsigned int time)
+{
+    while(time--)
+    {
+        ;
+    }
+}
 
 int main(int argc, char* argv[])
 {
-#if 0
 	ViSession defaultRM, vi;
 
 	char strStarPos[128];
@@ -123,7 +120,7 @@ int main(int argc, char* argv[])
 	unsigned long strStopPos_WriteLen;
 	unsigned long strGetData_WriteLen;
 
-	unsigned char *buffer = (unsigned char *)malloc(SINGLE_READ_MAX_LEN * sizeof(char));
+	unsigned char *buffer = (unsigned char *)malloc((SINGLE_READ_MAX_LEN + RIGOL_HEAD_MAX_LEN) * sizeof(char));
 	unsigned long readLen;
 
 	ViRsrc matches = (ViRsrc)malloc(256);
@@ -140,7 +137,7 @@ int main(int argc, char* argv[])
 
 	int file_num = 0;
     char des_file_name[64];
-	while(1)
+	while(file_num < 100)
 	{
 		//stop
 		viWrite(vi, (unsigned char *)strStop, strlen(strStop), &strStop_WriteLen);
@@ -158,34 +155,36 @@ int main(int argc, char* argv[])
 			//send get data commend
 			viWrite(vi, (unsigned char *)strGetData, strlen(strGetData), &strGetData_WriteLen);
 			//read data from ram of oscilloscope
-			viRead(vi, buffer, SINGLE_READ_MAX_LEN, &readLen);
+			viRead(vi, buffer, SINGLE_READ_MAX_LEN + RIGOL_HEAD_MAX_LEN, &readLen);
 
-			fwrite(buffer + RIGOL_HEAD_MAX_LEN, 1, readLens, fp);
+			fwrite(buffer + RIGOL_HEAD_MAX_LEN, 1, readLen - RIGOL_HEAD_MAX_LEN, fp);
 		}
 		viWrite(vi, (unsigned char *)strRun, strlen(strRun), &strStop_WriteLen);
 
 		fclose(fp);
+        delay(700000000);
 	}
 
 	viClose (vi);
 	viClose (defaultRM);
 	free(buffer);
 	free(matches);
-#endif
+
     DataFormatConverse();
 	printf("converse finished\n");
 
-	int i = 0;
+	int match_file_num = 0;
 	while(1)
 	{
 		char sou_file_name[64];
-		sprintf(sou_file_name, "file_path_%d", i);
+		sprintf(sou_file_name, "C:\\rigol_data\\data_oscillo\\oscillo_valid_data_%d.bin", match_file_num++);
 	 	if(FindSubstring(sou_file_name) == -1)
-		 {
-			 break;
-		 }
+        {
+            break;
+        }
 	}
 	printf("match finished\n");
+
 	return 0;
 }
 

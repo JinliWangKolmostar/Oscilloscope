@@ -37,3 +37,19 @@
 	<stdlib.h>
 	<string.h>
 
+1491793366 source:c:\users\kolmo\desktop\codeblocks_project\oscilloscope-collection_match_continue\get_data_from_ram\find_substring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1491792133 source:c:\users\kolmo\desktop\codeblocks_project\oscilloscope-collection_match_continue\get_data_from_ram\test.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1491793973 source:c:\users\kolmo\desktop\codeblocks_project\oscilloscope-collection_match_continue\get_data_from_ram\main.c
+	<stdio.h>
+	<stdlib.h>
+	<visa.h>
+	<string.h>
+
